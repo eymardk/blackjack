@@ -30,7 +30,7 @@ public class VueJoueur extends JPanel {
             Icon icon = c.getIcon(true);
             panelCartes.add(new JLabel(icon));
         }
-
+        
         panelCartes.revalidate();
         panelCartes.repaint();
     }

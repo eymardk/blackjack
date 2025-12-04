@@ -4,7 +4,6 @@ import cartes.Paquet;
 import cartes.Carte;
 import blackjack.modele.ReglesBlackjack;
 
-// Classe abstraite commune à tous les types de joueurs (humain, IA, random, croupier)
 public abstract class Joueur {
     protected String nom;
     protected Paquet main;
@@ -33,13 +32,13 @@ public abstract class Joueur {
     }
 
     public boolean estBust() {
-        return ReglesBlackjack.aDepasse(main);
+        return this.getScore() > 21;
     }
 
     public boolean estBlackjack() {
         return ReglesBlackjack.estBlackjack(main);
     }
 
-    // Décision de tirer ou non, selon le type de joueur
+
     public abstract boolean veutTirer(String carteVisibleCroupier);
 }

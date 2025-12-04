@@ -1,9 +1,9 @@
 package cartes;
 
-public class FabriqueCartes {
+public class FabriquerPaquet {
 
     // Cas particulier : jeu de 52 cartes classique
-    public static Paquet creerJeu52Cartes() {
+    public static Paquet creePaquet52() {
         String[] valeurs = {
             "2", "3", "4", "5", "6", "7","8", "9", "10", 
             "Valet", "Dame", "Roi", "AS"
@@ -11,11 +11,11 @@ public class FabriqueCartes {
 
         String[] couleurs = { "Coeur", "Carreau", "Trèfle", "Pique" };
 
-        return creerJeu(valeurs, couleurs);
+        return creePaquet(valeurs, couleurs);
     }
 
     // Cas particulier : jeu de 32 cartes classique
-    public static Paquet creerJeu32Cartes() {
+    public static Paquet creePaquet32() {
         String[] valeurs = {
             "7", "8", "9", "10", 
             "Valet", "Dame", "Roi" ,"AS"
@@ -23,12 +23,12 @@ public class FabriqueCartes {
 
         String[] couleurs = { "Coeur", "Carreau", "Trèfle", "Pique" };
 
-        return creerJeu(valeurs, couleurs);
+        return creePaquet(valeurs, couleurs);
     }
 
 
     // Cas général : crée un paquet à partir de listes de valeurs et de couleurs
-    public static Paquet creerJeu(String[] valeurs, String[] couleurs) {
+    public static Paquet creePaquet(String[] valeurs, String[] couleurs) {
         Paquet paquet = new Paquet();
 
         for (String couleur : couleurs) {

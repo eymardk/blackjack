@@ -10,7 +10,7 @@ public class JoueurHumain extends Joueur {
     @Override
     public boolean veutTirer(String carteVisibleCroupier) {
         // La décision réelle est prise par les boutons (Tirer/Rester).
-        // Cette méthode n'est pas utilisée pour l'humain.
+        
         return false;
     }
 }
