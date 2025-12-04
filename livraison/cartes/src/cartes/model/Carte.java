@@ -1,17 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package cartes.model;
 
 /**
- * Classe carte de jeu
+ * Représente une carte à jouer.
  * @author lebasni231
  */
 public class Carte {
     private String valeur;
     private String couleur;
 
+    /**
+     * Construit une carte.
+     * @param val la valeur
+     * @param coul la couleur
+     */
     public Carte(String val, String coul){
         this.valeur = val;
         this.couleur = coul;
@@ -21,9 +22,12 @@ public class Carte {
         return this.valeur;
     }
     
-    @Override
-    public String toString(){
-        return this.valeur + this.couleur + "\n";
+    public String getCouleur(){
+        return this.couleur;
     }
     
+    @Override
+    public String toString(){
+        return this.valeur + this.couleur;
+    }
 }
