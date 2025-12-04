@@ -19,19 +19,32 @@ public class VueJoueur extends JPanel {
         add(panelCartes, BorderLayout.CENTER);
     }
 
-    // Met à jour l’affichage pour un joueur donné
-    public void afficher(Joueur joueur) {
-        labelNomScore.setText(joueur.getNom() + " (" + joueur.getScore() + ")");
+    public void afficher(Joueur joueur, boolean montrerToutesLesCartes) {
+        if (montrerToutesLesCartes == true) {
+            labelNomScore.setText(joueur.getNom() + " (" + joueur.getScore() + ")");
+        }
+        else {
+            labelNomScore.setText(joueur.getNom());
+        }
+        
 
         panelCartes.removeAll();
         var main = joueur.getMain();
+
         for (int i = 0; i < main.getTaille(); i++) {
             Carte c = main.getCarte(i);
-            Icon icon = c.getIcon(true);
+            boolean visible = montrerToutesLesCartes || i == 0; // seule la première visible
+            Icon icon = c.getIcon(visible);
             panelCartes.add(new JLabel(icon));
         }
-        
+
         panelCartes.revalidate();
         panelCartes.repaint();
     }
+
+    // garder aussi ta méthode simple pour le joueur
+    public void afficher(Joueur joueur) {
+        afficher(joueur, true);
+    }
+
 }
