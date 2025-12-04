@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"blackjack"},{"l":"blackjack.controleur"},{"l":"blackjack.modele"},{"l":"blackjack.vue"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"blackjack"},{"l":"blackjack.controleur"},{"l":"blackjack.modele"},{"l":"blackjack.modele.joueur"},{"l":"blackjack.vue"}];updateSearchResults();

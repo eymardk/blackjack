@@ -1,213 +1,117 @@
 package blackjack.modele;
 
-import cartes.model.Paquet;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Gère le déroulement d'une partie de blackjack entre deux joueurs.
- * 
- * @author lebasni231
- */
+import cartes.Paquet;
+import cartes.FabriqueCartes;
+import blackjack.modele.joueur.Joueur;
+import blackjack.modele.joueur.JoueurHumain;
+import blackjack.modele.joueur.JoueurIA;
+
 public class Partie {
-    private Joueur j1;
-    private Joueur j2;
+
     private Paquet pioche;
-    private int sizeP;
-    private boolean j1Fini;
-    private boolean j2Fini;
-    
-    /**
-     * Construit une nouvelle partie.
-     * @param j1 le premier joueur
-     * @param j2 le second joueur
-     * @param p la pioche
-     */
-    public Partie(Joueur j1, Joueur j2, Paquet p){
-        this.pioche = p;
-        this.sizeP = this.pioche.getPaquet().size();
-        this.j1 = j1;
-        this.j2 = j2;
-        this.j1Fini = false;
-        this.j2Fini = false;
+    private Joueur croupier;
+    private List<Joueur> joueurs;
+    // Au démarrage, aucune manche en cours → true pour activer "Nouvelle partie"
+    private boolean partieTerminee = true;
+
+    public Partie() {
+        joueurs = new ArrayList<>();
+        croupier = new JoueurIA("Croupier");
     }
-    
-    public Joueur getJ1(){
-        return this.j1;
+
+    public void ajouterJoueur(Joueur j) {
+        joueurs.add(j);
     }
-    
-    public Joueur getJ2(){
-        return this.j2;
-    }
-    
-    public Paquet getPioche(){
-        return this.pioche;
-    }
-    
-    public boolean isJ1Fini(){
-        return this.j1Fini;
-    }
-    
-    public boolean isJ2Fini(){
-        return this.j2Fini;
-    }
-    
-    /**
-     * Réinitialise la partie pour une nouvelle manche.
-     */
-    public void restart(){
-        this.j1.newHand();
-        this.j2.newHand();
-        this.j1Fini = false;
-        this.j2Fini = false;
-        
-        if(this.sizeP == 52){
-            this.pioche.reset(52);
+
+    // Nouvelle manche : pioche, mélange, vider mains, distribuer 2 cartes à tous
+    public void initialiserNouvellePartie() {
+        pioche = FabriqueCartes.creerJeu52Cartes();
+        pioche.melanger();
+
+        croupier.viderMain();
+        for (Joueur j : joueurs) {
+            j.viderMain();
         }
-        else{
-            this.pioche.reset(32);
+
+        for (int i = 0; i < 2; i++) {
+            for (Joueur j : joueurs) {
+                j.ajouterCarte(pioche.retirer());
+            }
+            croupier.ajouterCarte(pioche.retirer());
         }
+
+        partieTerminee = false;
     }
-    
-    /**
-     * Initialise la partie : mélange et distribue 2 cartes à chaque joueur.
-     */
-    public void init(){
-        this.pioche.melangerPaquet();
-        
-        for(int i = 0; i < 2; i++){
-            j1.getPaquet().ajoutDessous(this.pioche.tiragePremiere());
-            j2.getPaquet().ajoutDessous(this.pioche.tiragePremiere());
+
+    public Paquet getPioche() { return pioche; }
+    public Joueur getCroupier() { return croupier; }
+    public List<Joueur> getJoueurs() { return joueurs; }
+
+    public boolean isPartieTerminee() { return partieTerminee; }
+    public void setPartieTerminee(boolean terminee) { this.partieTerminee = terminee; }
+
+    // Premier joueur humain (s’il existe)
+    public Joueur getPremierJoueurHumain() {
+        for (Joueur j : joueurs) {
+            if (j instanceof JoueurHumain) return j;
         }
-        
-        if(BlackJack.estBLackJack(this.j1.getPaquet())){
-            this.j1Fini = true;
-        }
-        if(BlackJack.estBLackJack(this.j2.getPaquet())){
-            this.j2Fini = true;
-        }
+        return null;
     }
-    
-    /**
-     * Fait jouer un tour au joueur 1.
-     */
-    public void tourJ1(){
-        if(!this.j1Fini && !BlackJack.supperieur(this.j1.getPaquet())){
-            this.j1.tour(this.pioche, this.j2);
-            
-            if(BlackJack.supperieur(this.j1.getPaquet())){
-                this.j1Fini = true;
+
+    // Tous les bots jouent automatiquement (l’humain est ignoré)
+    public void jouerTourBots() {
+        String carteVisibleCroupier = croupier.getMain().getCarte(0).getValeur();
+
+        for (Joueur j : joueurs) {
+            if (j instanceof JoueurHumain) continue;
+
+            while (!j.estBust() && j.veutTirer(carteVisibleCroupier)) {
+                j.ajouterCarte(pioche.retirer());
             }
         }
     }
-    
-    /**
-     * Fait jouer un tour au joueur 2.
-     */
-    public void tourJ2(){
-        if(!this.j2Fini && !BlackJack.supperieur(this.j2.getPaquet())){
-            this.j2.tour(this.pioche, this.j1);
-            
-            if(BlackJack.supperieur(this.j2.getPaquet())){
-                this.j2Fini = true;
+
+    // Croupier joue en dernier
+    public void jouerTourCroupier() {
+        String carteVisible = croupier.getMain().getCarte(0).getValeur();
+        while (!croupier.estBust() && croupier.veutTirer(carteVisible)) {
+            croupier.ajouterCarte(pioche.retirer());
+        }
+    }
+
+    // Données utilisées par le tableau de résultats
+    public Object[][] getTableauResultats() {
+        Object[][] data = new Object[joueurs.size()][4];
+
+        int scoreC = ReglesBlackjack.calculerScore(croupier.getMain());
+        boolean bustC = ReglesBlackjack.aDepasse(croupier.getMain());
+
+        for (int i = 0; i < joueurs.size(); i++) {
+            Joueur j = joueurs.get(i);
+            int scoreJ = ReglesBlackjack.calculerScore(j.getMain());
+            boolean bustJ = ReglesBlackjack.aDepasse(j.getMain());
+
+            String resultat;
+            if (bustJ) {
+                resultat = "PERDU";
+            } else if (bustC) {
+                resultat = "GAGNÉ";
+            } else if (scoreJ > scoreC) {
+                resultat = "GAGNÉ";
+            } else if (scoreJ < scoreC) {
+                resultat = "PERDU";
+            } else {
+                resultat = "ÉGALITÉ";
             }
+
+            data[i][0] = j.getNom();
+            data[i][1] = scoreJ;
+            data[i][2] = j.getMain().toString();
+            data[i][3] = resultat;
         }
-    }
-    
-    /**
-     * Marque le joueur 1 comme ayant terminé.
-     */
-    public void j1Reste(){
-        this.j1Fini = true;
-    }
-    
-    /**
-     * Marque le joueur 2 comme ayant terminé.
-     */
-    public void j2Reste(){
-        this.j2Fini = true;
-    }
-    
-    /**
-     * Vérifie si la partie est terminée.
-     * @return true si terminée, false sinon
-     */
-    public boolean isOver(){
-        if(this.j1Fini && this.j2Fini){
-            return true;
-        }
-        
-        if(this.pioche.getPaquet().size() < 2){
-            return true;
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Calcule les résultats de la partie.
-     * @return tableau [2][4] contenant nom, score, main, résultat
-     */
-    public Object[][] resultats(){
-        Object[][] res = new Object[2][4];
-        
-        int scoreJ1 = this.j1.getPaquet().getSum();
-        int scoreJ2 = this.j2.getPaquet().getSum();
-        
-        boolean j1Bust = BlackJack.supperieur(this.j1.getPaquet());
-        boolean j2Bust = BlackJack.supperieur(this.j2.getPaquet());
-        
-        boolean j1BJ = BlackJack.estBLackJack(this.j1.getPaquet());
-        boolean j2BJ = BlackJack.estBLackJack(this.j2.getPaquet());
-        
-        String resultatJ1;
-        String resultatJ2;
-        
-        if(j1BJ && j2BJ){
-            resultatJ1 = "EGALITE (BlackJack)";
-            resultatJ2 = "EGALITE (BlackJack)";
-        }
-        else if(j1BJ){
-            resultatJ1 = "GAGNE (BlackJack)";
-            resultatJ2 = "PERDU";
-        }
-        else if(j2BJ){
-            resultatJ1 = "PERDU";
-            resultatJ2 = "GAGNE (BlackJack)";
-        }
-        else if(j1Bust && j2Bust){
-            resultatJ1 = "PERDU (>21)";
-            resultatJ2 = "PERDU (>21)";
-        }
-        else if(j1Bust){
-            resultatJ1 = "PERDU (>21)";
-            resultatJ2 = "GAGNE";
-        }
-        else if(j2Bust){
-            resultatJ1 = "GAGNE";
-            resultatJ2 = "PERDU (>21)";
-        }
-        else if(scoreJ1 > scoreJ2){
-            resultatJ1 = "GAGNE (" + scoreJ1 + ")";
-            resultatJ2 = "PERDU (" + scoreJ2 + ")";
-        }
-        else if(scoreJ2 > scoreJ1){
-            resultatJ1 = "PERDU (" + scoreJ1 + ")";
-            resultatJ2 = "GAGNE (" + scoreJ2 + ")";
-        }
-        else {
-            resultatJ1 = "EGALITE (" + scoreJ1 + ")";
-            resultatJ2 = "EGALITE (" + scoreJ2 + ")";
-        }
-        
-        res[0][0] = this.j1.getName();
-        res[0][1] = scoreJ1;
-        res[0][2] = this.j1.getPaquet().toString();
-        res[0][3] = resultatJ1;
-        
-        res[1][0] = this.j2.getName();
-        res[1][1] = scoreJ2;
-        res[1][2] = this.j2.getPaquet().toString();
-        res[1][3] = resultatJ2;
-        
-        return res;
+        return data;
     }
 }

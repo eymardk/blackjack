@@ -93,6 +93,11 @@
         <!-- Copy application resources -->
         <copy todir="${build.home}">
             <fileset dir="${src.home}" excludes="**/*.java"/>
+            
+        </copy>
+        
+        <copy todir="${build.home}">
+            <fileset dir="${basedir}/resources"/>
         </copy>
 
     </target>
