@@ -1,20 +1,27 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package blackjack.modele;
 
 import cartes.model.Paquet;
 
 /**
- * Regles du blackjack
- * @author lebasni231@CAMPUS
+ * Règles du blackjack.
+ * @author lebasni231
  */
 public class BlackJack {
+    
+    /**
+     * Vérifie si le paquet est un BlackJack (21 avec 2 cartes).
+     * @param p le paquet
+     * @return true si BlackJack, false sinon
+     */
     public static boolean estBLackJack(Paquet p){
         return p.getSum() == 21 && (p.getPaquet().size() == 2);
     }
     
+    /**
+     * Vérifie si le paquet dépasse 21.
+     * @param p le paquet
+     * @return true si supérieur à 21, false sinon
+     */
     public static boolean supperieur(Paquet p){
         return p.getSum() > 21;
     }

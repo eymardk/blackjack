@@ -1,14 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package blackjack.modele;
 
 import cartes.model.Paquet;
 
 /**
- * Classe du joueur ia avec un peu de reflexion
- * 
+ * Joueur IA avec stratégie réfléchie.
+ * Pattern Strategy.
+ * @author lebasni231
  */
 public class JoueurIA extends Joueur {
     
@@ -21,6 +18,9 @@ public class JoueurIA extends Joueur {
         this.getPaquet().ajoutDessous(pqt.tiragePremiere());        
     }
 
+    /**
+     * Stratégie : tire si score < 11 ou si score < 17 et adversaire devant.
+     */
     @Override
     public void tour(Paquet pqt, Joueur adv) {
         int scoreOpp = adv.getPaquet().getSum();
