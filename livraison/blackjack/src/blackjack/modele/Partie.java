@@ -8,7 +8,10 @@ import blackjack.modele.joueur.JoueurIA;
 import blackjack.modele.joueur.JoueurRandom;
 
 /**
- * Gère une partie de Blackjack entre un joueur humain et un croupier (IA).
+ * Modèle d'une partie de Blackjack entre un joueur humain et un croupier.
+ * Gère la pioche, les joueurs et l'état de la partie.
+ *
+ * @author groupe_Kandji_Houssou_LeBasnier_
  */
 public class Partie extends ModeleObservable {
 
@@ -17,13 +20,16 @@ public class Partie extends ModeleObservable {
     private Joueur joueur;
     private boolean partieTerminee = true;
 
+    /**
+     * Crée une nouvelle partie avec un joueur humain.
+     */
     public Partie() {
         this.joueur = new JoueurHumain("Joueur");
     }
 
     /**
      * Initialise une nouvelle partie.
-     * 
+     *
      * @param with "IA" pour JoueurIA, autre pour JoueurRandom
      * @param size 32 ou 52 pour la taille du paquet
      */
@@ -42,21 +48,41 @@ public class Partie extends ModeleObservable {
         }
 
         partieTerminee = false;
-        fireChange(); // <-- nouveau
+        fireChange();
     }
 
+    /**
+     * Retourne la pioche.
+     *
+     * @return le paquet représentant la pioche
+     */
     public Paquet getPioche() {
         return pioche;
     }
 
+    /**
+     * Retourne le croupier.
+     *
+     * @return le joueur croupier
+     */
     public Joueur getCroupier() {
         return croupier;
     }
 
+    /**
+     * Retourne le joueur humain.
+     *
+     * @return le joueur humain
+     */
     public Joueur getJoueur() {
         return joueur;
     }
 
+    /**
+     * Fixe le type de croupier.
+     *
+     * @param with "IA" pour JoueurIA, autre pour JoueurRandom
+     */
     public void setCroupier(String with) {
         if ("IA".equals(with)) {
             this.croupier = new JoueurIA("Croupier (IA)");
@@ -65,6 +91,11 @@ public class Partie extends ModeleObservable {
         }
     }
 
+    /**
+     * Crée la pioche selon la taille demandée.
+     *
+     * @param size 32 ou 52 cartes
+     */
     public void setPioche(int size) {
         if (size == 32) {
             this.pioche = FabriquerPaquet.creePaquet32();
@@ -73,10 +104,20 @@ public class Partie extends ModeleObservable {
         }
     }
 
+    /**
+     * Indique si la partie est terminée.
+     *
+     * @return true si la partie est finie
+     */
     public boolean isPartieTerminee() {
         return partieTerminee;
     }
 
+    /**
+     * Modifie l'état de la partie et notifie les observateurs.
+     *
+     * @param terminee true si la partie est finie
+     */
     public void setPartieTerminee(boolean terminee) {
         this.partieTerminee = terminee;
         fireChange();
@@ -84,11 +125,13 @@ public class Partie extends ModeleObservable {
 
     /**
      * Tour du joueur : il tire une carte.
-     * Retourne true si la partie doit s'arrêter (bust ou blackjack).
+     *
+     * @return true si la partie doit s'arrêter (bust ou blackjack)
      */
     public boolean joueurTire() {
-        if (partieTerminee || pioche.estVide())
+        if (partieTerminee || pioche.estVide()) {
             return true;
+        }
 
         joueur.ajouterCarte(pioche.retirer());
 
@@ -104,8 +147,9 @@ public class Partie extends ModeleObservable {
      * Tour complet du croupier : il joue jusqu'à s'arrêter.
      */
     public void jouerTourCroupier() {
-        if (partieTerminee)
+        if (partieTerminee) {
             return;
+        }
 
         String carteVisible = croupier.getMain().getCarte(0).getValeur();
 
@@ -114,12 +158,15 @@ public class Partie extends ModeleObservable {
         }
 
         partieTerminee = true;
-        fireChange(); 
+        fireChange();
     }
 
     /**
-     * Renvoie un tableau 2x3 pour l'affichage des résultats :
-     * [ligne][colonne] = [0: nom, 1: score, 2: résultat]
+     * Construit le tableau des résultats pour l'affichage final.
+     * data[0] = croupier, data[1] = joueur.
+     * data[i][0] = nom, data[i][1] = score, data[i][2] = résultat.
+     *
+     * @return un tableau 2x3 contenant nom, score et résultat
      */
     public Object[][] getTableauResultats() {
         Object[][] data = new Object[2][3];

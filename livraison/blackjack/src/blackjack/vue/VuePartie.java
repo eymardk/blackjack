@@ -7,6 +7,12 @@ import blackjack.controleur.ControleurPartie;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Fenêtre principale du jeu de blackjack.
+ * Affiche la pioche, le joueur, le croupier et les boutons d'action.
+ *
+ * @author groupe_Kandji_Houssou_LeBasnier_
+ */
 public class VuePartie extends JFrame implements ModeleEcouteur {
 
     private final Partie partie;
@@ -20,6 +26,11 @@ public class VuePartie extends JFrame implements ModeleEcouteur {
     private final JButton boutonNouvellePartie;
     private final JButton boutonAccueil;
 
+    /**
+     * Crée la vue de partie et s'abonne au modèle.
+     *
+     * @param partie le modèle de partie à afficher
+     */
     public VuePartie(Partie partie) {
         this.partie = partie;
         partie.ajouterEcouteur(this);
@@ -58,18 +69,21 @@ public class VuePartie extends JFrame implements ModeleEcouteur {
 
         // Callbacks → contrôleur
         boutonNouvellePartie.addActionListener(e -> {
-            if (controleur != null)
+            if (controleur != null) {
                 controleur.nouvellePartie("IA", 52);
+            }
         });
 
         boutonTirer.addActionListener(e -> {
-            if (controleur != null)
+            if (controleur != null) {
                 controleur.joueurTire();
+            }
         });
 
         boutonRester.addActionListener(e -> {
-            if (controleur != null)
+            if (controleur != null) {
                 controleur.joueurReste();
+            }
         });
 
         boutonAccueil.addActionListener(e -> {
@@ -83,6 +97,11 @@ public class VuePartie extends JFrame implements ModeleEcouteur {
         setVisible(true);
     }
 
+    /**
+     * Notifié quand le modèle de partie change.
+     *
+     * @param source le modèle modifié
+     */
     @Override
     public void modeleMisAJour(Object source) {
         if (source == partie) {
@@ -93,6 +112,9 @@ public class VuePartie extends JFrame implements ModeleEcouteur {
         }
     }
 
+    /**
+     * Met à jour l'affichage des joueurs et des boutons.
+     */
     private void mettreAJourAffichage() {
         vueJoueur.afficher(partie.getJoueur());
 
@@ -111,6 +133,9 @@ public class VuePartie extends JFrame implements ModeleEcouteur {
         boutonAccueil.setEnabled(terminee);
     }
 
+    /**
+     * Affiche les résultats de la partie dans un tableau.
+     */
     private void afficherResultatTableau() {
         Object[][] data = partie.getTableauResultats();
         String[] colonnes = { "Joueur", "Score", "Résultat" };
@@ -123,9 +148,15 @@ public class VuePartie extends JFrame implements ModeleEcouteur {
                 this,
                 scrollPane,
                 "Résultat de la partie",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 
+    /**
+     * Associe un contrôleur à cette vue.
+     *
+     * @param controleur le contrôleur de partie
+     */
     public void setControleur(ControleurPartie controleur) {
         this.controleur = controleur;
     }

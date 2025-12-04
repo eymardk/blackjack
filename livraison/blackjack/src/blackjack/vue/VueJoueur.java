@@ -6,11 +6,20 @@ import cartes.Carte;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Vue graphique d'un joueur.
+ * Affiche son nom, son score et ses cartes sous forme d'icônes.
+ *
+ * @author groupe_Kandji_Houssou_LeBasnier_
+ */
 public class VueJoueur extends JPanel {
 
     private final JLabel labelNomScore;
     private final JPanel panelCartes;
 
+    /**
+     * Crée le panneau d'affichage d'un joueur.
+     */
     public VueJoueur() {
         setLayout(new BorderLayout());
         labelNomScore = new JLabel();
@@ -19,14 +28,19 @@ public class VueJoueur extends JPanel {
         add(panelCartes, BorderLayout.CENTER);
     }
 
+    /**
+     * Affiche les cartes d'un joueur.
+     *
+     * @param joueur le joueur à afficher
+     * @param montrerToutesLesCartes true pour tout afficher,
+     *                               false pour une seule carte visible
+     */
     public void afficher(Joueur joueur, boolean montrerToutesLesCartes) {
-        if (montrerToutesLesCartes == true) {
+        if (montrerToutesLesCartes) {
             labelNomScore.setText(joueur.getNom() + " (" + joueur.getScore() + ")");
-        }
-        else {
+        } else {
             labelNomScore.setText(joueur.getNom());
         }
-        
 
         panelCartes.removeAll();
         var main = joueur.getMain();
@@ -42,9 +56,12 @@ public class VueJoueur extends JPanel {
         panelCartes.repaint();
     }
 
-    // garder aussi ta méthode simple pour le joueur
+    /**
+     * Affiche toutes les cartes d'un joueur.
+     *
+     * @param joueur le joueur à afficher
+     */
     public void afficher(Joueur joueur) {
         afficher(joueur, true);
     }
-
 }

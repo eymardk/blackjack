@@ -8,6 +8,8 @@ import javax.swing.*;
 
 /**
  * Vue d'accueil : choix du paquet et de la difficulté.
+ *
+ * @author groupe_Kandji_Houssou_LeBasnier_
  */
 public class VueAccueil extends JFrame {
 
@@ -25,6 +27,11 @@ public class VueAccueil extends JFrame {
 
     private JButton boutonLancerPartie;
 
+    /**
+     * Crée la fenêtre d'accueil et initialise les boutons.
+     *
+     * @param accueilControleur le contrôleur associé
+     */
     public VueAccueil(ControleurAccueil accueilControleur){
         this.accueilControleur = accueilControleur;
 
@@ -77,6 +84,11 @@ public class VueAccueil extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Gère le choix de la taille du paquet.
+     *
+     * @param taille taille du paquet (32 ou 52)
+     */
     private void choisirTaillePaquet(int taille){
         boutonPaquet32.setEnabled(false);
         boutonPaquet52.setEnabled(false);
@@ -87,6 +99,11 @@ public class VueAccueil extends JFrame {
         accueilControleur.setTaillePaquet(taille);
     }
 
+    /**
+     * Gère le choix de la difficulté du croupier.
+     *
+     * @param difficulte "Random" ou "IA"
+     */
     private void choisirDifficulte(String difficulte){
         boutonIaFacile.setEnabled(false);
         boutonIaMedium.setEnabled(false);
@@ -96,6 +113,9 @@ public class VueAccueil extends JFrame {
         accueilControleur.setDifficulte(difficulte);
     }
 
+    /**
+     * Ferme l'accueil et démarre la partie.
+     */
     private void lancerPartie(){
         dispose();
         accueilControleur.start();
